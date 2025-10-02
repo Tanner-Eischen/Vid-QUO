@@ -5,7 +5,7 @@ import { DateSelectionSection } from "../MacbookAir/sections/DateSelectionSectio
 import { NavigationSection } from "../MacbookAir/sections/NavigationSection/NavigationSection";
 import { QuoteContainerSection } from "../MacbookAir/sections/QuoteContainerSection/QuoteContainerSection";
 import { QuoteHeaderSection } from "../MacbookAir/sections/QuoteHeaderSection/QuoteHeaderSection";
-import { PremiumFormSection } from "../MacbookAir/sections/PremiumFormSection/PremiumFormSection";
+import { StandardFormSection } from "../MacbookAir/sections/StandardFormSection/StandardFormSection";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 
@@ -52,7 +52,7 @@ export const Premium = (): JSX.Element => {
               Project Information
             </h2>
 
-            <PremiumFormSection />
+            <StandardFormSection />
           </div>
 
           <div className="px-8 mt-8">
