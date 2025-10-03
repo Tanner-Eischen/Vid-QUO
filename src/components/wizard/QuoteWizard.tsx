@@ -150,13 +150,21 @@ export const QuoteWizard: React.FC = () => {
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className={`p-3 rounded-lg transition ${
+              className={`p-3 rounded-lg transition cursor-pointer hover:bg-gray-100 ${
                 index === currentStep
                   ? 'bg-blue-100 border-blue-500 border-2'
                   : index < currentStep
                   ? 'bg-green-50 border-green-300 border'
                   : 'bg-gray-50 border-gray-300 border'
               }`}
+              onClick={() => {
+                if (index < currentStep) {
+                  setCurrentStep(index);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (index === currentStep + 1 && canProceed()) {
+                  handleNext();
+                }
+              }}
             >
               <div className="flex items-center gap-3">
                 <div
