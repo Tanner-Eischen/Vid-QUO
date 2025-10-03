@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, Quote } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 export const QuoteHistoryPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +65,9 @@ export const QuoteHistoryPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
+          <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
+            ← Back to Dashboard
+          </Button>
           <h1 className="text-3xl font-bold">Quote History</h1>
           <p className="text-gray-600 mt-2">View and manage your saved quotes</p>
         </div>

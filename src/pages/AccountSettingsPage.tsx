@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
@@ -7,6 +8,7 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 export const AccountSettingsPage: React.FC = () => {
+  const navigate = useNavigate();
   const { profile, updateProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -82,6 +84,9 @@ export const AccountSettingsPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
+          <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
+            ← Back to Dashboard
+          </Button>
           <h1 className="text-3xl font-bold">Account Settings</h1>
           <p className="text-gray-600 mt-2">Manage your profile and company information</p>
         </div>
