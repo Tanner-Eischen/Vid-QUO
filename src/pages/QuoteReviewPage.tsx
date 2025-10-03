@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { QuoteFlowSidebar } from '../components/quote/QuoteFlowSidebar';
 
 export const QuoteReviewPage: React.FC = () => {
   const navigate = useNavigate();
@@ -51,13 +52,15 @@ export const QuoteReviewPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
-          ← Back to Dashboard
-        </Button>
+    <div className="min-h-screen bg-gray-50 flex">
+      <QuoteFlowSidebar />
+      <div className="flex-1 p-6">
+        <div className="max-w-4xl mx-auto">
+          <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
+            ← Back to Dashboard
+          </Button>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle>Step 4: Review Quote</CardTitle>
             <p className="text-sm text-gray-600">Review your quote before submitting</p>
@@ -130,7 +133,8 @@ export const QuoteReviewPage: React.FC = () => {
               </div>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

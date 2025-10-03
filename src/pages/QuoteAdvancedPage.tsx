@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { QuoteFlowSidebar } from '../components/quote/QuoteFlowSidebar';
 
 export const QuoteAdvancedPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,13 +18,15 @@ export const QuoteAdvancedPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
-          ← Back to Dashboard
-        </Button>
+    <div className="min-h-screen bg-gray-50 flex">
+      <QuoteFlowSidebar />
+      <div className="flex-1 p-6">
+        <div className="max-w-4xl mx-auto">
+          <Button onClick={() => navigate('/')} variant="outline" className="mb-4">
+            ← Back to Dashboard
+          </Button>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle>Step 3: Advanced Options</CardTitle>
             <p className="text-sm text-gray-600">Fine-tune crew size and pricing</p>
@@ -75,7 +78,8 @@ export const QuoteAdvancedPage: React.FC = () => {
               </Button>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
