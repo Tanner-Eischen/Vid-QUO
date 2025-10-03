@@ -11,12 +11,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type MembershipTier = 'member' | 'pro' | 'executive';
 export type QuoteTier = 'basic' | 'standard' | 'premium';
+export type UserRole = 'admin' | 'client';
+export type QuoteStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
 
 export interface Profile {
   id: string;
   email: string;
   full_name: string | null;
   membership_tier: MembershipTier;
+  role: UserRole;
   company_name: string | null;
   company_logo_url: string | null;
   created_at: string;
@@ -27,6 +30,7 @@ export interface Quote {
   id: string;
   user_id: string;
   tier: QuoteTier;
+  status: QuoteStatus;
   client_name: string;
   project_start_date: string;
   project_end_date: string;

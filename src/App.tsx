@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LoginPage } from './pages/LoginPage';
-import { QuoteBuilderPage } from './pages/QuoteBuilderPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { CreateQuotePage } from './pages/CreateQuotePage';
 import { QuoteHistoryPage } from './pages/QuoteHistoryPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage';
 import { Button } from './components/ui/button';
@@ -33,10 +34,13 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Link to="/" className="text-2xl font-bold">VID-QUO</Link>
               <div className="flex gap-4">
                 <Link to="/">
-                  <Button variant="ghost">Quote Builder</Button>
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+                <Link to="/create-quote">
+                  <Button variant="ghost">Create Quote</Button>
                 </Link>
                 <Link to="/history">
-                  <Button variant="ghost">Quote History</Button>
+                  <Button variant="ghost">History</Button>
                 </Link>
                 <Link to="/settings">
                   <Button variant="ghost">Settings</Button>
@@ -70,8 +74,16 @@ const AppContent: React.FC = () => {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <QuoteBuilderPage />
+              <DashboardPage />
             </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-quote"
+        element={
+          <ProtectedRoute>
+            <CreateQuotePage />
           </ProtectedRoute>
         }
       />
