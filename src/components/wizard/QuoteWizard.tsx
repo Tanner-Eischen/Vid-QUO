@@ -118,13 +118,27 @@ export const QuoteWizard: React.FC = () => {
   const canProceed = () => {
     if (currentStep === 0) {
       return (
-        formData.clientName &&
-        formData.projectStartDate &&
-        formData.projectEndDate &&
-        formData.productionCompanyName
+        formData.clientName.trim() !== '' &&
+        formData.projectStartDate !== '' &&
+        formData.projectEndDate !== '' &&
+        formData.productionCompanyName.trim() !== ''
       );
     }
     return true;
+  };
+
+  const handleNext = () => {
+    if (canProceed() && currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -409,11 +423,11 @@ export const QuoteWizard: React.FC = () => {
             {currentStep < 3 && (
               <div className="flex justify-end gap-3 mt-6">
                 {currentStep > 0 && (
-                  <Button onClick={() => setCurrentStep(currentStep - 1)} variant="outline">
+                  <Button onClick={handlePrevious} variant="outline">
                     Previous
                   </Button>
                 )}
-                <Button onClick={() => setCurrentStep(currentStep + 1)} disabled={!canProceed()}>
+                <Button onClick={handleNext} disabled={!canProceed()}>
                   Next
                 </Button>
               </div>
