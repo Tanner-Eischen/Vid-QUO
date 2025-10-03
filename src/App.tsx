@@ -6,6 +6,10 @@ import { DashboardPage } from './pages/DashboardPage';
 import { CreateQuotePage } from './pages/CreateQuotePage';
 import { QuoteHistoryPage } from './pages/QuoteHistoryPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage';
+import { QuoteBasicInfoPage } from './pages/QuoteBasicInfoPage';
+import { QuoteProductionPage } from './pages/QuoteProductionPage';
+import { QuoteAdvancedPage } from './pages/QuoteAdvancedPage';
+import { QuoteReviewPage } from './pages/QuoteReviewPage';
 import { Button } from './components/ui/button';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -84,6 +88,38 @@ const AppContent: React.FC = () => {
         element={
           <ProtectedRoute>
             <CreateQuotePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-quote/basic"
+        element={
+          <ProtectedRoute>
+            <QuoteBasicInfoPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-quote/production"
+        element={
+          <ProtectedRoute>
+            <QuoteProductionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-quote/advanced"
+        element={
+          <ProtectedRoute>
+            <QuoteAdvancedPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-quote/review"
+        element={
+          <ProtectedRoute>
+            <QuoteReviewPage />
           </ProtectedRoute>
         }
       />
