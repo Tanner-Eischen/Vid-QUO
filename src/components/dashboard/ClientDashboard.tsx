@@ -1,126 +1,89 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase, Quote } from '../../lib/supabase';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export const ClientDashboard: React.FC = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const { user, profile } = useAuth();
+  const [recentQuotes, setRecentQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchQuotes();
+    fetchRecentQuotes();
   }, [user]);
 
-  const fetchQuotes = async () => {
+  const fetchRecentQuotes = async () => {
     if (!user) return;
 
     const { data, error } = await supabase
       .from('quotes')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(5);
 
-    if (error) {
-      console.error('Error fetching quotes:', error);
-    } else {
-      setQuotes(data || []);
+    if (!error && data) {
+      setRecentQuotes(data);
     }
 
     setLoading(false);
   };
 
-  const draftQuotes = quotes.filter((q) => q.status === 'draft');
-  const submittedQuotes = quotes.filter((q) => q.status === 'submitted');
-  const approvedQuotes = quotes.filter((q) => q.status === 'approved');
-  const totalQuotesValue = quotes.reduce((sum, q) => sum + Number(q.total_amount), 0);
-  const recentQuotes = quotes.slice(0, 5);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-600 mt-2">Overview of your quotes and activity</p>
+          <h1 className="text-3xl font-bold">Welcome back, {profile?.full_name}</h1>
+          <p className="text-gray-600 mt-2">
+            Membership: <span className="capitalize font-semibold">{profile?.membership_tier}</span>
+          </p>
         </div>
-        <Button onClick={() => navigate('/create-quote')}>
+        <Button onClick={() => navigate('/create-quote')} size="lg">
           Create New Quote
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-3 gap-6">
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Quotes</CardTitle>
+          <CardHeader>
+            <CardTitle>Total Quotes</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{quotes.length}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Draft Quotes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{draftQuotes.length}</p>
+            <p className="text-4xl font-bold">{recentQuotes.length}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Submitted</CardTitle>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{submittedQuotes.length}</p>
+          <CardContent className="space-y-2">
+            <Button onClick={() => navigate('/create-quote')} variant="outline" className="w-full">
+              New Quote
+            </Button>
+            <Button onClick={() => navigate('/history')} variant="outline" className="w-full">
+              View History
+            </Button>
+            <Button onClick={() => navigate('/settings')} variant="outline" className="w-full">
+              Settings
+            </Button>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Value</CardTitle>
+          <CardHeader>
+            <CardTitle>Membership Tier</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">${totalQuotesValue.toFixed(2)}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card className="bg-yellow-50 border-yellow-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-yellow-800">Pending Review</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-yellow-900">{submittedQuotes.length}</p>
-            <p className="text-xs text-yellow-700 mt-1">Awaiting approval</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-green-50 border-green-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-green-800">Approved</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-green-900">{approvedQuotes.length}</p>
-            <p className="text-xs text-green-700 mt-1">Ready to proceed</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-50 border-gray-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-800">In Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-gray-900">{draftQuotes.length}</p>
-            <p className="text-xs text-gray-700 mt-1">Not yet submitted</p>
+            <p className="text-2xl font-bold capitalize">{profile?.membership_tier}</p>
+            <p className="text-sm text-gray-600 mt-2">
+              {profile?.membership_tier === 'member' && 'Upgrade for more features'}
+              {profile?.membership_tier === 'pro' && 'Access to premium features'}
+              {profile?.membership_tier === 'executive' && 'Full access to all features'}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -130,46 +93,29 @@ export const ClientDashboard: React.FC = () => {
           <CardTitle>Recent Quotes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {recentQuotes.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-600 mb-4">No quotes found</p>
-                <Button onClick={() => navigate('/create-quote')}>
-                  Create Your First Quote
-                </Button>
-              </div>
-            ) : (
-              recentQuotes.map((quote) => (
-                <div
-                  key={quote.id}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition cursor-pointer"
-                  onClick={() => navigate('/history')}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold">{quote.client_name}</h3>
-                      <p className="text-sm text-gray-600">{quote.production_company_name}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-semibold">${Number(quote.total_amount).toFixed(2)}</p>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        quote.status === 'submitted' ? 'bg-yellow-100 text-yellow-800' :
-                        quote.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        quote.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {quote.status}
-                      </span>
-                    </div>
+          {loading ? (
+            <p className="text-gray-600">Loading...</p>
+          ) : recentQuotes.length === 0 ? (
+            <p className="text-gray-600">No quotes yet. Create your first quote to get started!</p>
+          ) : (
+            <div className="space-y-3">
+              {recentQuotes.map((quote) => (
+                <div key={quote.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="font-semibold">{quote.client_name}</p>
+                    <p className="text-sm text-gray-600">{quote.production_company_name}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(quote.created_at).toLocaleDateString()}
+                    </p>
                   </div>
-                  <div className="flex gap-4 mt-2 text-sm text-gray-600">
-                    <span className="capitalize">{quote.tier} tier</span>
-                    <span>{new Date(quote.created_at).toLocaleDateString()}</span>
+                  <div className="text-right">
+                    <p className="font-bold text-lg">${quote.total_amount.toFixed(2)}</p>
+                    <p className="text-xs text-gray-600 capitalize">{quote.status}</p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
