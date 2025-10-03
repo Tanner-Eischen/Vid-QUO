@@ -149,6 +149,7 @@ const AppContent: React.FC = () => {
 };
 
 export const App: React.FC = () => {
+  console.log('App rendering');
   return (
     <BrowserRouter>
       <AuthProvider>
