@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase, Quote } from '../../lib/supabase';
+import { Quote, quoteService } from '../../lib/storage';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
@@ -18,17 +18,8 @@ export const ClientDashboard: React.FC = () => {
   const fetchRecentQuotes = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('quotes')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(5);
-
-    if (!error && data) {
-      setRecentQuotes(data);
-    }
-
+    const data = await quoteService.getQuotes(user.id);
+    setRecentQuotes(data.slice(0, 5));
     setLoading(false);
   };
 

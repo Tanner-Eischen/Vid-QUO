@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase, Quote, Profile } from '../../lib/supabase';
+import { Quote, Profile, quoteService, profileService } from '../../lib/storage';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
@@ -17,19 +17,13 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   const fetchAdminData = async () => {
-    const [quotesResponse, usersResponse] = await Promise.all([
-      supabase.from('quotes').select('*').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*'),
-    ]);
+    const quotes = await quoteService.getAllQuotes();
+    const profiles = await Promise.all(
+      [...new Set(quotes.map(q => q.user_id))].map(id => profileService.getProfile(id))
+    );
 
-    if (quotesResponse.data) {
-      setAllQuotes(quotesResponse.data);
-    }
-
-    if (usersResponse.data) {
-      setAllUsers(usersResponse.data);
-    }
-
+    setAllQuotes(quotes.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    setAllUsers(profiles.filter((p): p is Profile => p !== null));
     setLoading(false);
   };
 
@@ -131,7 +125,7 @@ export const AdminDashboard: React.FC = () => {
                   <p className="text-sm text-gray-600">{user.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium capitalize">{user.membership_tier}</p>
+                  <p className="text-sm font-medium">{user.company_name || 'No Company'}</p>
                   <p className="text-xs text-gray-600 capitalize">{user.role}</p>
                 </div>
               </div>

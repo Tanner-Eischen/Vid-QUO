@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase, Quote, Profile } from '../lib/supabase';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { AdminDashboard } from '../components/dashboard/AdminDashboard';
 import { ClientDashboard } from '../components/dashboard/ClientDashboard';
 

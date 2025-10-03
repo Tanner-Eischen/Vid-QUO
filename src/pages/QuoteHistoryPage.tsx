@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase, Quote } from '../lib/supabase';
+import { Quote, quoteService } from '../lib/storage';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
@@ -18,28 +18,15 @@ export const QuoteHistoryPage: React.FC = () => {
   const fetchQuotes = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('quotes')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching quotes:', error);
-    } else {
-      setQuotes(data || []);
-    }
-
+    const data = await quoteService.getQuotes(user.id);
+    setQuotes(data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
     setLoading(false);
   };
 
   const handleDelete = async (quoteId: string) => {
     if (!confirm('Are you sure you want to delete this quote?')) return;
 
-    const { error } = await supabase
-      .from('quotes')
-      .delete()
-      .eq('id', quoteId);
+    const { error } = await quoteService.deleteQuote(quoteId);
 
     if (error) {
       alert('Error deleting quote: ' + error.message);
@@ -104,7 +91,7 @@ export const QuoteHistoryPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {quote.tier !== 'basic' && (
+                  {quote.num_deliverables && (
                     <div className="grid md:grid-cols-3 gap-4 mb-4 text-sm">
                       <div>
                         <p className="text-gray-600">Deliverables</p>
@@ -121,7 +108,7 @@ export const QuoteHistoryPage: React.FC = () => {
                     </div>
                   )}
 
-                  {quote.tier === 'premium' && (
+                  {quote.crew_per_setup && (
                     <div className="grid md:grid-cols-3 gap-4 mb-4 text-sm">
                       <div>
                         <p className="text-gray-600">Crew Size</p>

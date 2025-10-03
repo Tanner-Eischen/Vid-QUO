@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase, Profile } from '../lib/supabase';
+import { User, Profile, authService, profileService } from '../lib/storage';
 
 interface AuthContextType {
   user: User | null;
@@ -27,32 +26,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-      }
-      return data;
-    } catch (error) {
-      console.error('Unexpected error fetching profile:', error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id).then(setProfile);
+        const currentUser = authService.getCurrentUser();
+        setUser(currentUser);
+        if (currentUser) {
+          const userProfile = await profileService.getProfile(currentUser.id);
+          setProfile(userProfile);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -62,32 +43,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     initAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
-        try {
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            const profileData = await fetchProfile(session.user.id);
-            setProfile(profileData);
-          } else {
-            setProfile(null);
-          }
-        } catch (error) {
-          console.error('Error in auth state change:', error);
-        } finally {
-          setLoading(false);
-        }
-      })();
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { user: signedInUser, error } = await authService.signIn(email, password);
       if (error) throw error;
+
+      setUser(signedInUser);
+      if (signedInUser) {
+        const userProfile = await profileService.getProfile(signedInUser.id);
+        setProfile(userProfile);
+      }
+
       return { error: null };
     } catch (error) {
       return { error: error as Error };
@@ -96,23 +64,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      const { user: newUser, error } = await authService.signUp(email, password, fullName);
+      if (error) throw error;
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('User creation failed');
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email,
-          full_name: fullName,
-        });
-
-      if (profileError) throw profileError;
+      setUser(newUser);
+      if (newUser) {
+        const userProfile = await profileService.getProfile(newUser.id);
+        setProfile(userProfile);
+      }
 
       return { error: null };
     } catch (error) {
@@ -121,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await authService.signOut();
     setUser(null);
     setProfile(null);
   };
@@ -130,16 +89,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return { error: new Error('No user logged in') };
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id);
-
+      const { profile: updatedProfile, error } = await profileService.updateProfile(user.id, updates);
       if (error) throw error;
 
-      const updatedProfile = await fetchProfile(user.id);
       setProfile(updatedProfile);
-
       return { error: null };
     } catch (error) {
       return { error: error as Error };

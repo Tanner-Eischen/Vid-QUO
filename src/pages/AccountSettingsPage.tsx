@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -39,38 +38,26 @@ export const AccountSettingsPage: React.FC = () => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${profile?.id}-${Math.random()}.${fileExt}`;
-    const filePath = `logos/${fileName}`;
-
     setUploadingLogo(true);
 
-    const { error: uploadError } = await supabase.storage
-      .from('company-logos')
-      .upload(filePath, file);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result as string;
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      alert('Error uploading logo. Storage bucket may need to be created.');
+      const { error: updateError } = await updateProfile({
+        company_logo_url: base64String,
+      });
+
       setUploadingLogo(false);
-      return;
-    }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('company-logos')
-      .getPublicUrl(filePath);
+      if (updateError) {
+        alert('Error saving logo: ' + updateError.message);
+      } else {
+        alert('Logo uploaded successfully!');
+      }
+    };
 
-    const { error: updateError } = await updateProfile({
-      company_logo_url: publicUrl,
-    });
-
-    setUploadingLogo(false);
-
-    if (updateError) {
-      alert('Error saving logo URL: ' + updateError.message);
-    } else {
-      alert('Logo uploaded successfully!');
-    }
+    reader.readAsDataURL(file);
   };
 
 

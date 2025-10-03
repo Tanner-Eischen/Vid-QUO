@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { quoteService } from '../lib/storage';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { QuoteFlowSidebar } from '../components/quote/QuoteFlowSidebar';
@@ -39,7 +39,7 @@ export const QuoteReviewPage: React.FC = () => {
       status,
     };
 
-    const { error } = await supabase.from('quotes').insert([quoteData]);
+    const { error } = await quoteService.createQuote(quoteData);
 
     setLoading(false);
 
