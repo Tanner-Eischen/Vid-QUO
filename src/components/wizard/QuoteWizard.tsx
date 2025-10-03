@@ -24,10 +24,10 @@ interface FormData {
 }
 
 const steps = [
-  { id: 'basic', label: 'Basic Info', description: 'Client and project details' },
-  { id: 'production', label: 'Production Details', description: 'Filming and deliverables' },
-  { id: 'advanced', label: 'Advanced Options', description: 'Crew and pricing' },
-  { id: 'review', label: 'Review', description: 'Review and submit' },
+  { id: 'basic', label: 'Basic Info', description: 'Client and project details', path: '/create-quote/basic' },
+  { id: 'production', label: 'Production Details', description: 'Filming and deliverables', path: '/create-quote/production' },
+  { id: 'advanced', label: 'Advanced Options', description: 'Crew and pricing', path: '/create-quote/advanced' },
+  { id: 'review', label: 'Review', description: 'Review and submit', path: '/create-quote/review' },
 ];
 
 export const QuoteWizard: React.FC = () => {
@@ -129,15 +129,15 @@ export const QuoteWizard: React.FC = () => {
 
   const handleNext = () => {
     if (canProceed() && currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const nextStep = currentStep + 1;
+      navigate(steps[nextStep].path);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const prevStep = currentStep - 1;
+      navigate(steps[prevStep].path);
     }
   };
 
@@ -159,10 +159,9 @@ export const QuoteWizard: React.FC = () => {
               }`}
               onClick={() => {
                 if (index < currentStep) {
-                  setCurrentStep(index);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  navigate(steps[index].path);
                 } else if (index === currentStep + 1 && canProceed()) {
-                  handleNext();
+                  navigate(steps[index].path);
                 }
               }}
             >
@@ -446,3 +445,6 @@ export const QuoteWizard: React.FC = () => {
     </div>
   );
 };
+
+
+export { QuoteWizard }
