@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CircleCheck as CheckCircle2, Circle } from 'lucide-react';
 
 interface Step {
   id: string;
