@@ -5,15 +5,12 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
-type MembershipTier = 'member' | 'pro' | 'executive';
-
 export const LoginPage: React.FC = () => {
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [membershipTier, setMembershipTier] = useState<MembershipTier>('member');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +26,7 @@ export const LoginPage: React.FC = () => {
         return;
       }
 
-      const { error } = await signUp(email, password, fullName, membershipTier);
+      const { error } = await signUp(email, password, fullName);
 
       if (error) {
         setError(error.message);
@@ -91,26 +88,6 @@ export const LoginPage: React.FC = () => {
                 required
               />
             </div>
-            {isSignUp && (
-              <div className="space-y-2">
-                <Label htmlFor="membershipTier">Membership Tier</Label>
-                <select
-                  id="membershipTier"
-                  value={membershipTier}
-                  onChange={(e) => setMembershipTier(e.target.value as MembershipTier)}
-                  className="w-full px-3 py-2 border rounded-md"
-                >
-                  <option value="member">Member</option>
-                  <option value="pro">Pro Member</option>
-                  <option value="executive">Executive Member</option>
-                </select>
-                <p className="text-xs text-gray-600">
-                  {membershipTier === 'member' && 'Basic calculator access and quote history'}
-                  {membershipTier === 'pro' && 'PDF export, courses, and logo upload'}
-                  {membershipTier === 'executive' && 'All features including mobile access'}
-                </p>
-              </div>
-            )}
             {error && (
               <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
                 {error}

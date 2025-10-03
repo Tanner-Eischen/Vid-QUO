@@ -49,11 +49,6 @@ export const QuoteHistoryPage: React.FC = () => {
   };
 
   const exportToPDF = async (quote: Quote) => {
-    if (profile?.membership_tier === 'member') {
-      alert('PDF export is available for Pro and Executive members only. Please upgrade your membership.');
-      return;
-    }
-
     alert('PDF export functionality will be implemented. Quote will be sent to your email.');
   };
 
@@ -90,8 +85,8 @@ export const QuoteHistoryPage: React.FC = () => {
                         {quote.production_company_name}
                       </p>
                     </div>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded">
-                      {quote.tier.toUpperCase()}
+                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded capitalize">
+                      {quote.status}
                     </span>
                   </div>
                 </CardHeader>

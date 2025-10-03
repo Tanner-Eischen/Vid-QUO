@@ -9,8 +9,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type MembershipTier = 'member' | 'pro' | 'executive';
-export type QuoteTier = 'basic' | 'standard' | 'premium';
 export type UserRole = 'admin' | 'client';
 export type QuoteStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
 
@@ -18,7 +16,6 @@ export interface Profile {
   id: string;
   email: string;
   full_name: string | null;
-  membership_tier: MembershipTier;
   role: UserRole;
   company_name: string | null;
   company_logo_url: string | null;
@@ -29,7 +26,6 @@ export interface Profile {
 export interface Quote {
   id: string;
   user_id: string;
-  tier: QuoteTier;
   status: QuoteStatus;
   client_name: string;
   project_start_date: string;
@@ -49,11 +45,3 @@ export interface Quote {
   updated_at: string;
 }
 
-export interface Course {
-  id: string;
-  title: string;
-  description: string | null;
-  content_url: string | null;
-  minimum_tier: 'pro' | 'executive';
-  created_at: string;
-}

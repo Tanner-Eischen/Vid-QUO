@@ -38,11 +38,6 @@ export const AccountSettingsPage: React.FC = () => {
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
-    if (profile?.membership_tier === 'member') {
-      alert('Logo upload is available for Pro and Executive members only. Please upgrade your membership.');
-      return;
-    }
-
     const file = e.target.files[0];
     const fileExt = file.name.split('.').pop();
     const fileName = `${profile?.id}-${Math.random()}.${fileExt}`;
@@ -78,7 +73,6 @@ export const AccountSettingsPage: React.FC = () => {
     }
   };
 
-  const canUploadLogo = profile?.membership_tier === 'pro' || profile?.membership_tier === 'executive';
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -125,13 +119,6 @@ export const AccountSettingsPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Membership Tier</Label>
-                  <div className="px-3 py-2 bg-gray-100 rounded capitalize">
-                    {profile?.membership_tier}
-                  </div>
-                </div>
-
                 <Button type="submit" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </Button>
@@ -144,12 +131,6 @@ export const AccountSettingsPage: React.FC = () => {
               <CardTitle>Company Logo</CardTitle>
             </CardHeader>
             <CardContent>
-              {!canUploadLogo && (
-                <div className="bg-yellow-50 text-yellow-800 p-4 rounded mb-4">
-                  Logo upload is available for Pro and Executive members only.
-                </div>
-              )}
-
               {profile?.company_logo_url && (
                 <div className="mb-4">
                   <p className="text-sm text-gray-600 mb-2">Current Logo:</p>
@@ -168,7 +149,7 @@ export const AccountSettingsPage: React.FC = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
-                  disabled={!canUploadLogo || uploadingLogo}
+                  disabled={uploadingLogo}
                 />
                 {uploadingLogo && <p className="text-sm text-gray-600">Uploading...</p>}
               </div>

@@ -25,7 +25,6 @@ export const QuoteReviewPage: React.FC = () => {
       production_company_name: 'Sample Production',
       project_start_date: new Date().toISOString(),
       project_end_date: new Date().toISOString(),
-      tier: 'premium',
       num_deliverables: 1,
       avg_length_per_deliverable: 5,
       filming_days: 1,

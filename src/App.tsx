@@ -53,7 +53,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                {profile?.full_name} <span className="capitalize">({profile?.membership_tier})</span>
+                {profile?.full_name}
               </span>
               <Button onClick={signOut} variant="outline">
                 Sign Out

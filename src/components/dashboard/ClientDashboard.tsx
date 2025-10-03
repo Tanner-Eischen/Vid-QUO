@@ -37,9 +37,6 @@ export const ClientDashboard: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Welcome back, {profile?.full_name}</h1>
-          <p className="text-gray-600 mt-2">
-            Membership: <span className="capitalize font-semibold">{profile?.membership_tier}</span>
-          </p>
         </div>
         <Button onClick={() => navigate('/create-quote')} size="lg">
           Create New Quote
@@ -75,15 +72,11 @@ export const ClientDashboard: React.FC = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Membership Tier</CardTitle>
+            <CardTitle>Account Info</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold capitalize">{profile?.membership_tier}</p>
-            <p className="text-sm text-gray-600 mt-2">
-              {profile?.membership_tier === 'member' && 'Upgrade for more features'}
-              {profile?.membership_tier === 'pro' && 'Access to premium features'}
-              {profile?.membership_tier === 'executive' && 'Full access to all features'}
-            </p>
+            <p className="text-sm text-gray-600">Email</p>
+            <p className="font-semibold">{profile?.email}</p>
           </CardContent>
         </Card>
       </div>
